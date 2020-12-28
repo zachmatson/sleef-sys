@@ -23,11 +23,11 @@ fn main() {
         .define("BUILD_DFT", "FALSE")
         // no tests (should build and run the tests behind a feature flag):
         .define("BUILD_TESTS", "FALSE")
-        .define("BUILD_SHARED_LIBS", "TRUE")
+        .define("BUILD_SHARED_LIBS", "FALSE")
         .build();
 
-    println!("cargo:rustc-link-lib=sleef");
     println!("cargo:rustc-link-search=native={}", dst.join("lib").display());
+    println!("cargo:rustc-link-lib=static=sleef");
 
     let out_dir = PathBuf::from(env::var_os("OUT_DIR").expect("OUT_DIR was not set"));
     let sleef_header = out_dir.join("include").join("sleef.h");
@@ -51,14 +51,15 @@ fn main() {
     // Generate inline functions:
         .generate_inline_functions(true)
     // Only target nightly Rust for the time being:
-        .rust_target(bindgen::RustTarget::Nightly);
+        // .rust_target(bindgen::RustTarget::Nightly);
 
     // Blacklist vector types:
     if target.contains("86") && (features.contains("sse") || features.contains("avx")) {
         // x86 targets: i386,i586,i686,x86,x86_64
         let vs = [
             // MMX:
-            "__m64",
+            // No longer available in core::arch::x86(_64)
+            // "__m64",
             // SSE:
             "__m128", "__m128i", "__m128d",
             // AVX
