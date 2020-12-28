@@ -49,7 +49,7 @@ fn main() {
     // The bindings should use the ctypes from libc, not std::os::raw:
         .ctypes_prefix("libc")
     // Generate inline functions:
-        .generate_inline_functions(true)
+        .generate_inline_functions(true);
     // Only target nightly Rust for the time being:
         // .rust_target(bindgen::RustTarget::Nightly);
 
